@@ -40,9 +40,7 @@ server.post("/participants", async (req, res) => {
 
     const { name } = req.body;
 
-    try {
-        nameValidate(req.body, res);
-    } catch (err) { res.status(422)}
+    nameValidate(req.body, res);
 
     try {
         const userExists = await db.collection("participants").findOne({ name: name });
