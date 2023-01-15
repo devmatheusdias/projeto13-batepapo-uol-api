@@ -72,7 +72,7 @@ server.post("/participants", async (req, res) => {
         //     from: name, to: 'Todos', text: 'entra na sala...', type: 'status', time: date
         // })
 
-        return res.status(201)
+        return res.status(201).send("")
 
     } catch (error) {
 
