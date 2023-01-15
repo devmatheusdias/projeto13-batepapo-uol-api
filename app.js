@@ -1,18 +1,34 @@
 import { nameSchema } from "./schemas/participants.schema.js";
 import { messageSchema } from "./schemas/message.schema.js";
-import { db } from "./backend/databaseConnection.js"
+import { MongoClient } from "mongodb";
 import dayjs from "dayjs";
-
+import dotenv from 'dotenv'
 import express from 'express';
 import cors from 'cors';
+
 const server = express();
 server.use(cors());
 server.use(express.json());
 
-
 server.listen(5000, () => console.log(`Servidor rodando`))
 
-export default server;
+dotenv.config()
+
+const mongoClient = new MongoClient(process.env.DATABASE_URL)
+
+export let db;
+
+const database = "minhadb";
+
+try {
+    await mongoClient.connect();
+    db = mongoClient.db(database)
+    console.log(`conectado ao banco de dados ${database}`)
+
+} catch (error) {
+    console.log('Erro ao conectar no banco de dados ')
+}
+
 
 function nameValidate(name, res) {
 
@@ -46,7 +62,7 @@ server.post("/participants", async (req, res) => {
         const userExists = await db.collection("participants").findOne({ name: name });
 
         if (userExists) {
-            return res.status(409);
+            return res.status(409).send("");
         }
 
         await db.collection("participants").insertOne({ name: name, lastStatus: Date.now() })
@@ -56,7 +72,7 @@ server.post("/participants", async (req, res) => {
                 getTime()
         })
 
-        return res.status(201)
+        return res.status(201).send("")
 
     } catch (error) {
 
