@@ -18,12 +18,11 @@ const mongoClient = new MongoClient(process.env.DATABASE_URL)
 
 export let db;
 
-const database = "minhadb";
 
 try {
     await mongoClient.connect();
-    db = mongoClient.db(database)
-    console.log(`conectado ao banco de dados ${database}`)
+    db = mongoClient.db("minhadb")
+    console.log(`conectado ao banco de dados`)
 
 } catch (error) {
     console.log('Erro ao conectar no banco de dados ')
