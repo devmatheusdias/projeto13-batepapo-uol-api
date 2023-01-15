@@ -46,15 +46,16 @@ function messageValidate(message, res) {
     }
 }
 
-function getTime() {
-    const date = dayjs(Date()).format('HH:mm:ss')
-    return date
-}
+// function getTime() {
+//     const date = dayjs(Date()).format('HH:mm:ss')
+//     return date
+// }
 
 
 server.post("/participants", async (req, res) => {
 
     const { name } = req.body;
+    const date = dayjs(Date()).format('HH:mm:ss')
 
     nameValidate(req.body, res);
 
@@ -68,8 +69,7 @@ server.post("/participants", async (req, res) => {
         await db.collection("participants").insertOne({ name: name, lastStatus: Date.now() })
 
         await db.collection("messages").insertOne({
-            from: name, to: 'Todos', text: 'entra na sala...', type: 'status', time:
-                getTime()
+            from: name, to: 'Todos', text: 'entra na sala...', type: 'status', time: date
         })
 
         return res.status(201).send("")
