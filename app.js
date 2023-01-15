@@ -2,15 +2,15 @@ import { nameSchema } from "./schemas/participants.schema.js";
 import { messageSchema } from "./schemas/message.schema.js";
 import { db } from "./backend/databaseConnection.js"
 import dayjs from "dayjs";
+
 import express from 'express';
 import cors from 'cors';
 const server = express();
 server.use(cors());
 server.use(express.json());
 
-const PORT = 5000
 
-server.listen(PORT, () => console.log(`Servidor rodando na porta ${PORT}`))
+server.listen(5000, () => console.log(`Servidor rodando`))
 
 export default server;
 
@@ -84,7 +84,7 @@ server.post("/messages", async (req, res) => {
     const { to, text, type } = req.body;
     const user = req.headers.user;
 
-    // messageValidate(req.body, res)
+    messageValidate(req.body, res)
 
     try {
 
