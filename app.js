@@ -34,6 +34,8 @@ setInterval(async () => {
     activeParticipants.map((participant) => {
         if (Date.now() - participant.lastStatus >= 10000) {
             db.collection("participants").deleteOne({ name: participant.name })
+            db.collection("messages").insert({type: 'status', from: participant.name, text: 'sai da sala...' })
+            
             console.log(`${participant.name} saiu`);
         }
     })
