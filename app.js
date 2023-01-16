@@ -111,7 +111,7 @@ server.post("/messages", async (req, res) => {
 
         await db.collection("messages").insertOne({ from: user, to: to, text: text, type: type, time: time})
 
-        res.status(201)
+        res.status(201).send("")
 
     } catch (error) {
         res.send(error.details)
