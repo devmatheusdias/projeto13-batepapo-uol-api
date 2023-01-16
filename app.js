@@ -127,10 +127,12 @@ server.get("/messages", async (req, res) => {
     const { limit } = req.query
     const user = req.headers.user
 
-    const publicMessages = [];
-    const privateMessages = [];
 
     try {
+
+
+        const publicMessages = [];
+        const privateMessages = [];
 
         const messages = await db.collection("messages").find().toArray();
 
@@ -143,13 +145,15 @@ server.get("/messages", async (req, res) => {
             }
         })
 
+        console.log(publicMessages.length);
+
         if (publicMessages.length === 0 && privateMessages.length === 0) {
             return res.send(messages);
-        } else if (publicMessages.length > 0 && limit === "") {
-            return res.send(publicMessages)
         }
 
-
+        if (publicMessages.length > 0 && limit === undefined) {
+            return res.send(publicMessages)
+        }
 
 
         //     // if (limit < 1 || limit === undefined) {
