@@ -56,7 +56,7 @@ function messageValidate(message, res) {
     }
 }
 
-function limitValidate(limit, res){
+function limitValidate(limit, res) {
     const { error, value } = limitSchema.validate(limit);
 
     if (error) res.sendStatus(422).send(error.details)
@@ -153,6 +153,12 @@ server.get("/messages", async (req, res) => {
         })
 
         if (publicMessages.length === 0 && privateMessages.length === 0) {
+
+            if (messages.length >= limit && limit > 0) {
+                const lastMessages = messages.slice(0, parseInt(limit));
+                    return res.send(lastMessages)
+            }
+
             return res.send(messages);
         }
 
@@ -161,15 +167,6 @@ server.get("/messages", async (req, res) => {
         }
 
         res.send(messages);
-
-
-        //     // if (limit < 1 || limit === undefined) {
-        //     //     return res.send(messages)
-        //     // }
-
-        //     // const lastMessages = messages.slice(0, parseInt(limit));
-
-        //     // res.send(lastMessages)
 
     } catch (error) {
         res.send(error.details)
