@@ -29,10 +29,10 @@ try {
 
 setInterval(async () => {
     const activeParticipants = await db.collection("participants").find().toArray();
-    
+
     activeParticipants.map((participant) => {
         if (Date.now() - participant.lastStatus >= 10000) {
-            db.collection("participants").deleteOne({name: participant.name})
+            db.collection("participants").deleteOne({ name: participant.name })
             console.log(`${participant.name} saiu`);
         }
     })
@@ -114,7 +114,7 @@ server.post("/messages", async (req, res) => {
             return res.status(422).send("Este usuario nao existe!");
         }
 
-        await db.collection("messages").insertOne({ from: user, to: to, text: text, type: type, time: time})
+        await db.collection("messages").insertOne({ from: user, to: to, text: text, type: type, time: time })
 
         res.status(201).send("")
 
@@ -123,43 +123,42 @@ server.post("/messages", async (req, res) => {
     }
 })
 
-server.get("/messages", async(req, res) => {
+server.get("/messages", async (req, res) => {
     const { limit } = req.query
     const user = req.headers.user
-    
+
     const publicMessages = [];
     const privateMessages = [];
 
     try {
 
         const messages = await db.collection("messages").find().toArray();
-    
+
         messages.map((message) => {
-            if (message.type === 'message'){
+            if (message.type === 'message') {
                 publicMessages.push(message)
             }
-            else if(message.type === 'private_message') {
+            else if (message.type === 'private_message') {
                 privateMessages.push(message);
             }
         })
-        
-        if(publicMessages.length === 0 && privateMessages.length === 0){
-            return res.send(messages);
-        }
 
-        if(publicMessages.length > 0 && limit === ""){
+        if (publicMessages.length === 0 && privateMessages.length === 0) {
+            return res.send(messages);
+        } else if (publicMessages.length > 0 && limit === "") {
             return res.send(publicMessages)
         }
 
-        res.send('ok!')
 
-    //     // if (limit < 1 || limit === undefined) {
-    //     //     return res.send(messages)
-    //     // }
 
-    //     // const lastMessages = messages.slice(0, parseInt(limit));
 
-    //     // res.send(lastMessages)
+        //     // if (limit < 1 || limit === undefined) {
+        //     //     return res.send(messages)
+        //     // }
+
+        //     // const lastMessages = messages.slice(0, parseInt(limit));
+
+        //     // res.send(lastMessages)
 
     } catch (error) {
         res.send(error.details)
