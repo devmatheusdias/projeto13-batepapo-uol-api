@@ -27,6 +27,17 @@ try {
     console.log('Erro ao conectar no banco de dados ')
 }
 
+setInterval(async () => {
+    const activeParticipants = await db.collection("participants").find().toArray();
+    
+    activeParticipants.map((participant) => {
+        if (Date.now() - participant.lastStatus >= 10000) {
+            db.collection("participants").deleteOne({name: participant.name})
+            console.log(`${participant.name} saiu`);
+        }
+    })
+
+}, 15000);
 
 function nameValidate(name, res) {
 
@@ -43,12 +54,6 @@ function messageValidate(message, res) {
         return res.status(422).send(error.details)
     }
 }
-
-// function getTime() {
-//     const date = dayjs(Date()).format('HH:mm:ss')
-//     return date
-// }
-
 
 server.post("/participants", async (req, res) => {
 
@@ -121,9 +126,7 @@ server.post("/messages", async (req, res) => {
 server.get("/messages", async(req, res) => {
     const { limit } = req.query
     const user = req.headers.user
-
     
-    const incomingMessages = [];
     const publicMessages = [];
     const privateMessages = [];
 
@@ -162,11 +165,6 @@ server.get("/messages", async(req, res) => {
         res.send(error.details)
     }
 })
-
-async function getMessages() {
-
-
-}
 
 
 server.post("/status", async (req, res) => {
