@@ -66,9 +66,9 @@ server.post("/participants", async (req, res) => {
 
         await db.collection("participants").insert({ name: name, lastStatus: Date.now() })
 
-        // await db.collection("messages").insertOne({
-        //     from: name, to: 'Todos', text: 'entra na sala...', type: 'status', time: date
-        // })
+        await db.collection("messages").insertOne({
+            from: name, to: 'Todos', text: 'entra na sala...', type: 'status', time: date
+        })
 
         return res.status(201).send("")
 
