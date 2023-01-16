@@ -119,17 +119,29 @@ server.post("/messages", async (req, res) => {
 
 server.get("/messages", async (req, res) => {
     const { limit } = req.query
+    const user = req.headers.user
+    const incomingMessages = [];
 
     try {
         const messages = await db.collection("messages").find().toArray()
 
-        if (limit < 1 || limit === undefined) {
+        messages.map((message) => {
+            if(message.type != 'status') incomingMessages.push(message.type)
+        })
+
+        if(incomingMessages.length <= 0){
             return res.send(messages)
         }
 
-        const lastMessages = messages.slice(0, parseInt(limit));
+        res.send(incomingMessages)
 
-        res.send(lastMessages)
+        // if (limit < 1 || limit === undefined) {
+        //     return res.send(messages)
+        // }
+
+        // const lastMessages = messages.slice(0, parseInt(limit));
+
+        // res.send(lastMessages)
 
     } catch (error) {
         res.send(error.details)
