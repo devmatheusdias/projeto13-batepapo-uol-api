@@ -130,7 +130,6 @@ server.get("/messages", async (req, res) => {
 
     try {
 
-
         const publicMessages = [];
         const privateMessages = [];
 
@@ -145,14 +144,12 @@ server.get("/messages", async (req, res) => {
             }
         })
 
-        console.log(publicMessages.length);
-
         if (publicMessages.length === 0 && privateMessages.length === 0) {
             return res.send(messages);
         }
 
         if (publicMessages.length > 0 && limit === undefined) {
-            res.send(publicMessages)
+            res.send(messages)
         }
 
         res.send(messages);
