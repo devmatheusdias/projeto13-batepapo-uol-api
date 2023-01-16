@@ -96,6 +96,7 @@ server.post("/messages", async (req, res) => {
 
     const { to, text, type } = req.body;
     const user = req.headers.user;
+    const time = dayjs(Date()).format('HH:mm:ss')
 
     messageValidate(req.body, res)
 
@@ -108,7 +109,7 @@ server.post("/messages", async (req, res) => {
             return res.status(422).send("Este usuario nao existe!");
         }
 
-        await db.collection("messages").insertOne({ from: user, to: to, text: text, type: type, time: getTime() })
+        await db.collection("messages").insertOne({ from: user, to: to, text: text, type: type, time: time})
 
         res.status(201)
 
