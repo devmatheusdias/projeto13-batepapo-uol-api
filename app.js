@@ -120,7 +120,9 @@ server.post("/messages", async (req, res) => {
 server.get("/messages", async (req, res) => {
     const { limit } = req.query
     const user = req.headers.user
+    
     const incomingMessages = [];
+    const publicMessages = [];
 
     try {
         const messages = await db.collection("messages").find().toArray()
@@ -131,7 +133,16 @@ server.get("/messages", async (req, res) => {
 
         if(incomingMessages.length <= 0){
             return res.send(messages)
+
+        }else if(limit != undefined){
+            
+            messages.map((message) => {
+                if(message.type === 'message') publicMessages.push(message)
+            })
+
+            return res.send(publicMessages)
         }
+
 
         res.send(incomingMessages)
 
