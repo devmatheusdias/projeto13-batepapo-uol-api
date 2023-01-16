@@ -147,7 +147,7 @@ server.get("/messages", async(req, res) => {
             return res.send(messages);
         }
 
-        if(publicMessages.length > 0 && limit === undefined){
+        if(publicMessages.length > 0 && limit === ""){
             return res.send(publicMessages)
         }
 
