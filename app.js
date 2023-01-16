@@ -65,7 +65,7 @@ server.post("/participants", async (req, res) => {
             return res.status(409).send("");
         }
 
-        await db.collection("participants").insert({ name: name, lastStatus: lastStatus})
+        await db.collection("participants").insert({ name: name, lastStatus: lastStatus })
 
         await db.collection("messages").insertOne({
             from: name, to: 'Todos', text: 'entra na sala...', type: 'status', time: date
@@ -117,47 +117,55 @@ server.post("/messages", async (req, res) => {
     }
 })
 
-server.get("/messages", async (req, res) => {
+server.get("/messages", async(req, res) => {
     const { limit } = req.query
     const user = req.headers.user
+
     
     const incomingMessages = [];
     const publicMessages = [];
+    const privateMessages = [];
 
     try {
-        const messages = await db.collection("messages").find().toArray()
 
+        const messages = await db.collection("messages").find().toArray();
+    
         messages.map((message) => {
-            if(message.type != 'status') incomingMessages.push(message.type)
+            if (message.type === 'message'){
+                publicMessages.push(message)
+            }
+            else if(message.type === 'private_message') {
+                privateMessages.push(message);
+            }
         })
+        
+        if(publicMessages.length === 0 && privateMessages.length === 0){
+            return res.send(messages);
+        }
 
-        if(incomingMessages.length <= 0){
-            return res.send(messages)
-
-        }else if(limit != undefined){
-            
-            messages.map((message) => {
-                if(message.type === 'message') publicMessages.push(message)
-            })
-
+        if(publicMessages.length > 0 && limit === undefined){
             return res.send(publicMessages)
         }
 
+        res.send('ok!')
 
-        res.send(incomingMessages)
+    //     // if (limit < 1 || limit === undefined) {
+    //     //     return res.send(messages)
+    //     // }
 
-        // if (limit < 1 || limit === undefined) {
-        //     return res.send(messages)
-        // }
+    //     // const lastMessages = messages.slice(0, parseInt(limit));
 
-        // const lastMessages = messages.slice(0, parseInt(limit));
-
-        // res.send(lastMessages)
+    //     // res.send(lastMessages)
 
     } catch (error) {
         res.send(error.details)
     }
 })
+
+async function getMessages() {
+
+
+}
 
 
 server.post("/status", async (req, res) => {
