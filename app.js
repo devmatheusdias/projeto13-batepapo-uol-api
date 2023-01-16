@@ -1,5 +1,6 @@
 import { nameSchema } from "./schemas/participants.schema.js";
 import { messageSchema } from "./schemas/message.schema.js";
+import { limitSchema } from "./schemas/limit.schema.js";
 import { MongoClient } from "mongodb";
 import dayjs from "dayjs";
 import dotenv from 'dotenv'
@@ -53,6 +54,12 @@ function messageValidate(message, res) {
     if (error) {
         return res.status(422).send(error.details)
     }
+}
+
+function limitValidate(limit, res){
+    const { error, value } = limitSchema.validate(limit);
+
+    if (error) res.sendStatus(422).send(error.details)
 }
 
 server.post("/participants", async (req, res) => {
@@ -127,6 +134,7 @@ server.get("/messages", async (req, res) => {
     const { limit } = req.query
     const user = req.headers.user
 
+    limitValidate(limit, res);
 
     try {
 
