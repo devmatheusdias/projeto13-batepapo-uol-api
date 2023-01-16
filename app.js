@@ -16,12 +16,11 @@ dotenv.config()
 
 const mongoClient = new MongoClient(process.env.DATABASE_URL)
 
-export let db;
-
+let db;
 
 try {
     await mongoClient.connect();
-    db = mongoClient.db("minhadb")
+    db = mongoClient.db()
     console.log(`conectado ao banco de dados`)
 
 } catch (error) {
