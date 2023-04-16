@@ -66,8 +66,8 @@ function limitValidate(limit, res) {
 
 server.post("/participants", async (req, res) => {
 
-    const { name } = req.body;
-    const date = dayjs(Date()).format('HH:mm:ss');
+    const { name } = req.body;  /*Deve receber (pelo body do request), um parâmetro name, contendo o nome do participante a ser cadastrado na sala:*/
+    const date = dayjs(Date()).format('HH:mm:ss'); 
     const lastStatus = Date.now();
 
     nameValidate(req.body, res);
@@ -76,7 +76,7 @@ server.post("/participants", async (req, res) => {
         const userExists = await db.collection("participants").findOne({ name: name });
 
         if (userExists) {
-            return res.status(409).send("");
+            return res.status(409);
         }
 
         await db.collection("participants").insert({ name: name, lastStatus: lastStatus })
@@ -85,11 +85,10 @@ server.post("/participants", async (req, res) => {
             from: name, to: 'Todos', text: 'entra na sala...', type: 'status', time: date
         })
 
-        return res.status(201).send("")
+        return res.status(201);
 
     } catch (error) {
-
-        res.status(422)
+        res.sendStatus(422)
     }
 
 })
