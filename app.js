@@ -77,7 +77,7 @@ server.post("/participants", async (req, res) => {
         const userExists = await db.collection("participants").findOne({ name: name });
 
         if (userExists) {
-            return res.status(409);
+            return res.sendStatus(409);
         }
 
         await db.collection("participants").insertOne({name, lastStatus})
@@ -89,7 +89,7 @@ server.post("/participants", async (req, res) => {
         return res.sendStatus(201);
 
     } catch (error) {
-        res.status(422)
+        res.sendStatus(422)
     }
 
 })
