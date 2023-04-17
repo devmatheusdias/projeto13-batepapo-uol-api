@@ -130,7 +130,7 @@ server.get("/messages", async (req, res) => {
     const { limit } = req.query
     const user = req.headers.user
 
-    const validate = limitSchema.validate(req.body)
+    const validate = limitSchema.validate(req.query)
 
     if (validate.error) {
         return res.sendStatus(422)
