@@ -35,27 +35,24 @@ setInterval(async () => {
     activeParticipants.map((participant) => {
         if (Date.now() - participant.lastStatus >= 10000) {
             db.collection("participants").deleteOne({ name: participant.name })
-            db.collection("messages").insert({type: 'status', from: participant.name, text: 'sai da sala...' })
-            
+            db.collection("messages").insert({ type: 'status', from: participant.name, text: 'sai da sala...' })
+
             console.log(`${participant.name} saiu`);
         }
     })
 
 }, 15000);
 
-function nameValidate(name, res) {
-
-    const { error, value } = nameSchema.validate(name);
-
-    if (error) res.sendStatus(422).send(error.details)
-}
+// function nameValidate(reqBody, res) {
+   
+// }
 
 function messageValidate(message, res) {
 
     const { error, value } = messageSchema.validate(message);
 
     if (error) {
-        return res.status(422).send(error.details)
+        return res.sendStatus(422);
     }
 }
 
@@ -67,20 +64,26 @@ function limitValidate(limit, res) {
 
 server.post("/participants", async (req, res) => {
 
-    const { name } = req.body;  
-    const date = dayjs(Date()).format('HH:mm:ss'); 
+    const { name } = req.body;
+    const date = dayjs(Date()).format('HH:mm:ss');
     const lastStatus = Date.now();
 
-    nameValidate(req.body, res);
+    const validate = nameSchema.validate(req.body)
+
+    if (validate.error) {
+        return res.status(422)
+    }
+
 
     try {
+
         const userExists = await db.collection("participants").findOne({ name: name });
 
         if (userExists) {
             return res.sendStatus(409);
         }
 
-        await db.collection("participants").insertOne({name, lastStatus})
+        await db.collection("participants").insertOne({ name, lastStatus })
 
         await db.collection("messages").insertOne({
             from: name, to: 'Todos', text: 'entra na sala...', type: 'status', time: date
@@ -88,7 +91,7 @@ server.post("/participants", async (req, res) => {
 
         return res.sendStatus(201);
 
-    } catch (error) {
+    } catch (err) {
         res.sendStatus(422)
     }
 
@@ -158,7 +161,7 @@ server.get("/messages", async (req, res) => {
 
             if (messages.length >= limit && limit > 0) {
                 const lastMessages = messages.slice(0, parseInt(limit));
-                    return res.send(lastMessages)
+                return res.send(lastMessages)
             }
 
             return res.send(messages);
