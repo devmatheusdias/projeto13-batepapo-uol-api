@@ -156,10 +156,10 @@ server.get("/messages", async (req, res) => {
 
             if (messages.length >= limit && limit > 0) {
                 const lastMessages = messages.slice(0, parseInt(limit));
-                return res.status(200).send(lastMessages)
+                return res.send(lastMessages)
             }
 
-            return res.status(200).send(messages);
+            return res.send(messages);
         }
 
         if (publicMessages.length > 0 && limit === undefined) {
