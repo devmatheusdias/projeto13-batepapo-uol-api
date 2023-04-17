@@ -88,7 +88,7 @@ server.post("/participants", async (req, res) => {
         return res.status(201);
 
     } catch (error) {
-        res.sendStatus(422)
+        res.status(422)
     }
 
 })
