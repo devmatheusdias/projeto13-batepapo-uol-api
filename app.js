@@ -43,9 +43,6 @@ setInterval(async () => {
 
 }, 15000);
 
-// function nameValidate(reqBody, res) {
-   
-// }
 
 function messageValidate(message, res) {
 
@@ -54,12 +51,6 @@ function messageValidate(message, res) {
     if (error) {
         return res.sendStatus(422);
     }
-}
-
-function limitValidate(limit, res) {
-    const { error, value } = limitSchema.validate(limit);
-
-    if (error) res.sendStatus(422).send(error.details)
 }
 
 server.post("/participants", async (req, res) => {
@@ -128,7 +119,7 @@ server.post("/messages", async (req, res) => {
 
         await db.collection("messages").insertOne({ from: user, to: to, text: text, type: type, time: time })
 
-        res.status(201).send("")
+        res.sendStatus(201).send("")
 
     } catch (error) {
         res.send(error.details)
@@ -139,7 +130,11 @@ server.get("/messages", async (req, res) => {
     const { limit } = req.query
     const user = req.headers.user
 
-    limitValidate(limit, res);
+    const validate = limitSchema.validate(req.body)
+
+    if (validate.error) {
+        return res.sendStatus(422)
+    }
 
     try {
 
@@ -161,10 +156,10 @@ server.get("/messages", async (req, res) => {
 
             if (messages.length >= limit && limit > 0) {
                 const lastMessages = messages.slice(0, parseInt(limit));
-                return res.send(lastMessages)
+                return res.status(200).send(lastMessages)
             }
 
-            return res.send(messages);
+            return res.status(200).send(messages);
         }
 
         if (publicMessages.length > 0 && limit === undefined) {
