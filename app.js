@@ -71,7 +71,7 @@ server.post("/participants", async (req, res) => {
     const validate = nameSchema.validate(req.body)
 
     if (validate.error) {
-        return res.status(422)
+        return res.sendStatus(422)
     }
 
 
